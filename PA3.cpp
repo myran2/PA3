@@ -11,7 +11,7 @@ int main(int argc, char** argv)
     Stack<string> programLines = Stack<string>(5);
     loadFile(argv[1], programLines);
 
-    programLines.print(true);
+    //programLines.print(true);
     Stack< Stack<string> > tokens = tokenize(programLines);
     analyze(tokens);
     return 0;

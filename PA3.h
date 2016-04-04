@@ -217,28 +217,25 @@ string extractVariable(string& line)
     string variable = "";
     string newLine = "";
 
-    bool buildingVar = true;
+    bool record = true;
 
     for (int i = 0; i < line.length(); i++)
     {   
-        // variables are declared at the start of the line, so 
-        // we can assume that we're looking at the start of a variable
-        // until we hit a ',' or '='.
-        if (line[i] == ',' || line[i] == '=')
-            buildingVar = false;
+        if (line[i] == ';' || line[i] == '=' || line[i] == ',')
+            record = false;
         
-        if (buildingVar)
+        if (islower(line[i]) && record)
+        {
             variable += line[i];
-        else if (line[i] == ';')
-            break;
-        else if (!isalpha(line[i]))
-            newLine += line[i];
+            continue;
+        }
 
+        if (!islower(line[i]))
+            newLine += line[i];
     }
+
     remove(newLine, variable);
     line = newLine;
-    //remove(line, variable);
-
     return variable;
 }
 
@@ -337,7 +334,10 @@ int calcMaxLoopDepth(Stack<string> keywords)
             if (curDepth > maxDepth)
                 maxDepth = curDepth;
 
-            curDepth--;
+            // if we encounter an END before a FOR, curDepth might become negative.
+            // this check prevents that
+            if (curDepth > 0)
+                curDepth--;
         }
     }
 
@@ -367,7 +367,7 @@ void analyze(Stack< Stack<string> > tokens)
     Stack<string> keywords = tokens.pop();
     Stack<string> errors = tokens.pop();
 
-    cout << "OUTPUT> The maximum depth of nested loops is " << calcMaxLoopDepth(keywords) << endl;
+    cout << "OUTPUT> The maximum depth of nested loops is " << calcMaxLoopDepth(keywords) << endl << endl;
 
     Stack<string> keywordsUnique = makeUnique(keywords);
     std::cout << "Keywords: ";
@@ -391,6 +391,7 @@ void analyze(Stack< Stack<string> > tokens)
     cout << endl;
 
     std::cout << "Syntax Error(s): ";
-    errors.print(false);
+    if (!errors.empty())
+        errors.print(false);
     cout << endl;
 }

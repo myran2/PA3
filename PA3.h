@@ -154,13 +154,11 @@ string trim(string& line)
 // removes 'r' from 'line'. returns true if the removal was successful
 bool remove(string& line, const string& r)
 {
-    //cout << "Removing " << r << " from " << line << endl;
     bool found = false;
     while (line.find(r) != string::npos)
     {
         found = true;
         line.erase(line.find(r), r.length());
-        //cout << line << endl;
     }
 
     return found;
@@ -209,23 +207,39 @@ Stack<string> extractConstants(string& line)
     return constants;
 }
 
-// extracts AND REMOVES variables from 'line'
-Stack<string> extractVariables(const string& line)
+// extracts AND REMOVES variable from 'line'
+string extractVariable(string& line)
 {
-    Stack<string> variables(5);
+    // if there's no '=' or ',' in the line, it can't contain a variable declaration
+    if (line.find("=") == string::npos && line.find(",") == string::npos)
+        return "";
+    
+    string variable = "";
+    string newLine = "";
+
+    bool buildingVar = true;
 
     for (int i = 0; i < line.length(); i++)
-    {
-        string variable = "";
-        
+    {   
         // variables are declared at the start of the line, so 
         // we can assume that we're looking at the start of a variable
         // until we hit a ',' or '='.
-        if (line[i] != ',' && line[i] != ';')
+        if (line[i] == ',' || line[i] == '=')
+            buildingVar = false;
+        
+        if (buildingVar)
             variable += line[i];
-    }
+        else if (line[i] == ';')
+            break;
+        else if (!isalpha(line[i]))
+            newLine += line[i];
 
-    return variables;
+    }
+    remove(newLine, variable);
+    line = newLine;
+    //remove(line, variable);
+
+    return variable;
 }
 
 Stack< Stack<string> > tokenize(Stack<string>& lines)
@@ -246,7 +260,6 @@ Stack< Stack<string> > tokenize(Stack<string>& lines)
     while (!lines.empty())
     {
         string line = lines.pop();
-        //cout << "'" << line << "'" << endl;
 
         // 3 is the length of KEYWORDS
         for (int i = 0; i < 3; i++)
@@ -254,13 +267,6 @@ Stack< Stack<string> > tokenize(Stack<string>& lines)
             if (remove(line, KEYWORDS[i]))
                 // we want duplicates of keywords so we can compute loop depth later
                 keywords.push(KEYWORDS[i], true);
-        }
-        
-        // 5 is the length of OPERATORS
-        for (int i = 0; i < 5; i++)
-        {
-            if (remove(line, OPERATORS[i]))
-                operators.push(OPERATORS[i], false);
         }
 
         // remove leading spaces
@@ -281,14 +287,23 @@ Stack< Stack<string> > tokenize(Stack<string>& lines)
             constants.push(constant, false);
         }
 
+        variables.push(extractVariable(line), false);
+
+        // 6 is the length of OPERATORS
+        for (int i = 0; i < 6; i++)
+        {
+            if (remove(line, OPERATORS[i]))
+                operators.push(OPERATORS[i], false);
+        }
+
         // 2 is the length of DELIMITERS
-        /*for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 2; i++)
         {
             if (remove(line, DELIMITERS[i]))
                 delimitors.push(DELIMITERS[i], false);
-        }*/
+        }
 
-        cout << "'" << line << "'" << endl;
+        remove(line, " ");
 
         // Put all the unknown stuff into its own stack
         if (line != "")
@@ -305,6 +320,44 @@ Stack< Stack<string> > tokenize(Stack<string>& lines)
     return tokens;
 }
 
+int calcMaxLoopDepth(Stack<string> keywords)
+{
+    int curDepth = 0;
+    int maxDepth = 0;
+
+    while (!keywords.empty())
+    {
+        string keyword = keywords.pop();
+
+        if (keyword == "FOR")
+            curDepth++;
+
+        if (keyword == "END")
+        {
+            if (curDepth > maxDepth)
+                maxDepth = curDepth;
+
+            curDepth--;
+        }
+    }
+
+    // needed?
+    if (curDepth > maxDepth)
+        maxDepth = curDepth;
+
+    return maxDepth;
+}
+
+Stack<string> makeUnique(Stack<string> stack)
+{
+    Stack<string> res(5);
+    while (!stack.empty())
+        res.push(stack.pop(), false);
+
+    return res;
+
+}
+
 void analyze(Stack< Stack<string> > tokens)
 {
     Stack<string> variables = tokens.pop();
@@ -312,11 +365,32 @@ void analyze(Stack< Stack<string> > tokens)
     Stack<string> delimitors = tokens.pop();
     Stack<string> operators = tokens.pop();
     Stack<string> keywords = tokens.pop();
-    Stack<string> unknown = tokens.pop();
+    Stack<string> errors = tokens.pop();
 
-    // make everything unique
+    cout << "OUTPUT> The maximum depth of nested loops is " << calcMaxLoopDepth(keywords) << endl;
 
-    // calc max loop depth
+    Stack<string> keywordsUnique = makeUnique(keywords);
+    std::cout << "Keywords: ";
+    keywordsUnique.print(false);
+    cout << endl;
 
-    // find errors (print everything left, for the most part)
+    std::cout << "Identifiers: ";
+    variables.print(false);
+    cout << endl;
+
+    std::cout << "Constants: ";
+    constants.print(false);
+    cout << endl;
+
+    std::cout << "Operators: ";
+    operators.print(false);
+    cout << endl;
+
+    std::cout << "Delimiters: ";
+    delimitors.print(false);
+    cout << endl;
+
+    std::cout << "Syntax Error(s): ";
+    errors.print(false);
+    cout << endl;
 }

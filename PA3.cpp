@@ -13,6 +13,6 @@ int main(int argc, char** argv)
 
     programLines.print(true);
     Stack< Stack<string> > tokens = tokenize(programLines);
-    tokens.pop();
+    analyze(tokens);
     return 0;
 }

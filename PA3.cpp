@@ -8,10 +8,11 @@ int main(int argc, char** argv)
         exit(1);
     }
     
-    Stack programLines = Stack(5);
+    Stack<string> programLines = Stack<string>(5);
     loadFile(argv[1], programLines);
 
-    //programLines.print(true);
-    tokenize(programLines);
+    programLines.print(true);
+    Stack< Stack<string> > tokens = tokenize(programLines);
+    tokens.pop();
     return 0;
 }

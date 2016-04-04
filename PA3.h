@@ -17,14 +17,13 @@ class Stack
         void push(string line, bool allowDupes);
         string pop();
         void print(bool newLine);
-        bool empty() { return top != -1; };
+        bool empty() { return top == -1; };
 
 };
 
 // Creates a new stack of initial size 'initSize'
 Stack::Stack(int initSize)
 {
-    cout << "Creating stack of size " << initSize << endl;
     if (initSize < 1)
     {
         cout << "Stack size must be positive!";
@@ -129,9 +128,8 @@ bool remove(string& line, const string& r)
 
 void tokenize(Stack& lines)
 {
-    const string KEYWORDS[] = { "BEGIN", "END", "FOR" };
-    //const string OPERATORS[] = { "+", "*", "-", "/", "++", "=" };
-    const string OPERATORS[] = { "+", "*", "-", "/", "=" };
+    //const string KEYWORDS[] = { "BEGIN", "END", "FOR" };
+    const string OPERATORS[] = { "++", "+", "*", "-", "/", "=" };
     const string DELIMITERS[] = { ",", ";" };
 
     Stack keywords = Stack(2);
@@ -141,6 +139,7 @@ void tokenize(Stack& lines)
     while (!lines.empty())
     {
         string line = lines.pop();
+        cout << line << endl;
 
         if (line == "BEGIN" || line == "END")
         {

@@ -11,7 +11,7 @@ int main(int argc, char** argv)
     Stack programLines = Stack(5);
     loadFile(argv[1], programLines);
 
-    programLines.print(true);
+    //programLines.print(true);
     tokenize(programLines);
     return 0;
 }

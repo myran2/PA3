@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>
 
 using namespace std;
 
@@ -119,7 +120,7 @@ void Stack<T>::print(bool newLine)
 void loadFile(const string& fileName, Stack<string>& lines)
 {
     ifstream file;
-    file.open(fileName);
+    file.open(fileName.c_str());
 
     if (!file.is_open())
     {
@@ -219,7 +220,7 @@ string extractVariable(string& line)
 
     bool record = true;
 
-    for (int i = 0; i < line.length(); i++)
+    for (unsigned int i = 0; i < line.length(); i++)
     {   
         if (line[i] == ';' || line[i] == '=' || line[i] == ',')
             record = false;

@@ -1,0 +1,7 @@
+IF (i, 10, ++)
+BEGIN
+END
+FOR (j, 10, ++)
+BEGIN
+    sum=sum + i + j;
+END

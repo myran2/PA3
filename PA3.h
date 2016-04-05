@@ -190,7 +190,7 @@ Stack<string> extractConstants(string& line)
 {
     Stack<string> constants(5);
 
-    for (int i = 0; i < line.length(); i++)
+    for (unsigned int i = 0; i < line.length(); i++)
     {
         string constant = "";
         while (isDigit(line[i]))

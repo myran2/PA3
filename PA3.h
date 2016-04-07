@@ -113,7 +113,7 @@ void Stack<T>::print(bool newLine)
     }
     
     for (int i = 0; i <= top; i++)
-        cout << "'" + data[i] + "'" << (newLine ? "\n" : " ");
+        cout << data[i] << (newLine ? "\n" : " ");
 }
 
 // loads a file from 'fileName' into the 'lines' stack

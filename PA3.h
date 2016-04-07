@@ -243,7 +243,7 @@ string extractVariable(string& line)
 Stack< Stack<string> > tokenize(Stack<string>& lines)
 {
     const string KEYWORDS[] = { "BEGIN", "END", "FOR" };
-    const string OPERATORS[] = { "++", "+", "*", "-", "/", "=" };
+    const string OPERATORS[] = { "++", "--", "+", "*", "-", "/", "=" };
     const string DELIMITERS[] = { ",", ";" };
 
     Stack<string> keywords = Stack<string>(2);
@@ -290,7 +290,7 @@ Stack< Stack<string> > tokenize(Stack<string>& lines)
 			variables.push(var, false);
 
         // 6 is the length of OPERATORS
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 7; i++)
         {
             if (remove(line, OPERATORS[i]))
                 operators.push(OPERATORS[i], false);

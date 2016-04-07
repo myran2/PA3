@@ -113,7 +113,7 @@ void Stack<T>::print(bool newLine)
     }
     
     for (int i = 0; i <= top; i++)
-        cout << data[i] << (newLine ? "\n" : " ");
+        cout << "'" + data[i] + "'" << (newLine ? "\n" : " ");
 }
 
 // loads a file from 'fileName' into the 'lines' stack
@@ -285,7 +285,9 @@ Stack< Stack<string> > tokenize(Stack<string>& lines)
             constants.push(constant, false);
         }
 
-        variables.push(extractVariable(line), false);
+        string var = extractVariable(line);
+        if (var != "")
+			variables.push(var, false);
 
         // 6 is the length of OPERATORS
         for (int i = 0; i < 6; i++)
